@@ -1,5 +1,4 @@
-# README: Traffic Light Control System Using Arduino Uno
-
+# README: Traffic Light Control System Using ESP32 on Proteus
 Project Overview
 This project implements a traffic light control system for a four-way intersection with a pedestrian crossing feature. It uses an ESP32, LEDs for traffic and pedestrian signals, and a push button for pedestrian crossing requests. The project demonstrates state-based control using a Finite State Machine (FSM).
 
