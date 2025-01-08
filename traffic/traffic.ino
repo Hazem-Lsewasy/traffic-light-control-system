@@ -47,7 +47,7 @@ void setup() {
 void loop() {
     unsigned long currentTime = millis(); // Get the current time in milliseconds
     bool pedestrianRequest = digitalRead(PED_BUTTON_PIN) == LOW; // Check if pedestrian button is pressed
-
+    
     // FSM logic: handle each traffic light state
     switch (currentState) {
         case NS_GREEN: // North-South traffic light is green
@@ -67,6 +67,7 @@ void loop() {
             if (currentTime - lastTransition > greenTime || pedestrianRequest) {
                 currentState = NS_YELLOW; // Transition to NS Yellow
                 lastTransition = currentTime; // Update the transition time
+                flag = 1;
             }
             break;
 
@@ -75,9 +76,9 @@ void loop() {
             digitalWrite(NS_GREEN_PIN, LOW);
             digitalWrite(NS_YELLOW_PIN, HIGH);
 
-            // Transition to East-West green after yellow duration
+            // Transition to North-South green after yellow duration
             if (currentTime - lastTransition > yellowTime) {
-                currentState = EW_GREEN;
+                currentState = pedestrianRequest ? PED_WALK : EW_GREEN;
                 lastTransition = currentTime;
             }
             break;
@@ -91,11 +92,14 @@ void loop() {
             digitalWrite(NS_GREEN_PIN, LOW);
             digitalWrite(NS_YELLOW_PIN, LOW);
             digitalWrite(NS_RED_PIN, HIGH);
+            digitalWrite(PED_WALK_PIN, LOW);
+            digitalWrite(PED_DONT_WALK_PIN, HIGH);
 
             // Check if time for green is over or pedestrian button pressed
             if (currentTime - lastTransition > greenTime || pedestrianRequest) {
                 currentState = EW_YELLOW; // Transition to EW Yellow
                 lastTransition = currentTime;
+                flag = 0;
             }
             break;
 
@@ -124,7 +128,7 @@ void loop() {
 
             // Transition to the next traffic light signal
             if (currentTime - lastTransition > pedestrianTime) {  
-                currentState = flag ? EW_GREEN : NS_GREEN;
+                currentState = flag ? NS_GREEN : EW_GREEN;
                 lastTransition = currentTime;
             }
             break;
